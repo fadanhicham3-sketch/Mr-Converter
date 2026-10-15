@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070d18">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232781ff'/%3E%3Cpath d='M16 44l12-14 8 9 6-7 8 12z' fill='%23fff'/%3E%3Ccircle cx='24' cy='22' r='5' fill='%23fff'/%3E%3C/svg%3E">
+<title>Mr. IMG Converter</title>
+<style>
+:root{color-scheme:dark;--bg:#070d18;--panel:#101b2d;--line:#293b58;--muted:#9aacc9;--blue:#2781ff;--purple:#874bff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#14213b 0,#070d18 55%);color:#f4f7ff;font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+header{height:72px;border-bottom:1px solid #1b2940;display:flex;align-items:center;justify-content:space-between;padding:0 max(22px,calc((100% - 1180px)/2));gap:16px}
+.brand{font-weight:800;font-size:clamp(17px,2.5vw,25px);letter-spacing:.2px}.brand span{color:#438cff}.logo{display:inline-grid;place-items:center;width:38px;height:38px;border:3px solid #4d83ff;border-radius:10px;color:#7a8dff;margin-right:10px;vertical-align:middle;font-size:24px}
+nav a{color:#b8c6df;text-decoration:none;margin-left:22px}nav a:hover{color:white}
+main{max-width:1080px;margin:45px auto;padding:0 20px}.hero{text-align:center;margin-bottom:36px}.hero h1{font-size:clamp(29px,5vw,54px);line-height:1.1;margin:0 0 12px;letter-spacing:-1px}.hero h1 span{color:#438cff}.hero h2{font-size:21px;margin:0 0 6px}.hero p{color:#aabbd6;margin:0}
+.converter{background:linear-gradient(145deg,rgba(18,30,49,.97),rgba(12,21,36,.98));border:1px solid var(--line);border-radius:17px;padding:24px;display:grid;grid-template-columns:1.2fr .8fr;gap:28px;box-shadow:0 18px 60px #0003}
+.dropzone{min-height:330px;border:2px dashed #536b91;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:25px;transition:.2s;background:#0b1423}.dropzone.drag{border-color:#6a91ff;background:#122445}.cloud{font-size:55px;color:#809bd1;line-height:1.2}.dropzone h3{margin:10px 0 4px;font-size:21px}.or{color:var(--muted);margin:4px 0 14px}
+button,.file-button{border:0;cursor:pointer;border-radius:10px;padding:13px 20px;font:600 16px system-ui;color:white;background:linear-gradient(110deg,var(--blue),var(--purple));display:inline-flex;justify-content:center;align-items:center;gap:9px;transition:filter .2s,transform .2s}button:hover,.file-button:hover{filter:brightness(1.1)}button:active{transform:scale(.98)}button:disabled{opacity:.45;cursor:not-allowed}input[type=file]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0 0 0 0);pointer-events:none}.hint{font-size:13px;color:#8498b8;margin-top:17px;max-width:360px}
+.settings{border-left:1px solid #24334a;padding-left:28px;display:flex;flex-direction:column;gap:18px;min-width:0}.field label{display:block;font-weight:600;margin-bottom:8px}.field select,.field input[type=number],.field input[type=text]{width:100%;background:#142136;border:1px solid #30435f;color:#f2f6ff;border-radius:9px;padding:12px;font:inherit;min-width:0}.field select:focus,.field input:focus{outline:2px solid #438cff;border-color:transparent}.two{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:9px}.two span{color:var(--muted)}.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}.checkrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.checkrow label{margin:0}.checkrow input{width:18px;height:18px;accent-color:#438cff}.settings .convert{width:100%;padding:14px}
+.settings .convert{margin-top:auto}
+details.rename{border:1px solid #2a3c58;border-radius:10px;background:#0e192b}details.rename summary{cursor:pointer;padding:12px 14px;font-weight:600;list-style:none}details.rename summary::-webkit-details-marker{display:none}details.rename summary::after{content:"▾";float:right;color:var(--muted)}details.rename[open] summary::after{content:"▴"}.rename-body{padding:2px 14px 14px;display:grid;gap:13px}.rename-body label{font-size:14px;margin-bottom:5px!important}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.chip{background:#1c3152;padding:6px 11px;font-size:13px;font-weight:500;border-radius:8px}.chip:hover{background:#294574;filter:none}
+.files{grid-column:1/-1;border-top:1px solid #25354d;padding-top:18px;display:none}.files h3{margin:0;font-size:16px}.files-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}.heading-actions{display:flex;gap:8px}.heading-actions button{padding:9px 14px;font-size:14px}.ghost{background:#1c3152}.file-list{display:grid;gap:9px}
+.file-item{display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px;border:1px solid #263752;border-radius:10px;background:#0b1422;content-visibility:auto;contain-intrinsic-size:auto 68px}
+.thumb{width:48px;height:48px;border-radius:6px;background:#18243a;display:grid;place-items:center;font-size:10px;font-weight:700;color:#7f94b8;overflow:hidden;letter-spacing:.4px}.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.filename{background:none;border:0;padding:0;margin:0;text-align:left;font:500 14px/1.35 system-ui;color:#f4f7ff;overflow-wrap:anywhere;display:block;width:100%;cursor:text;border-radius:4px}.filename:hover{filter:none;background:#122036}.name-edit{width:100%;background:#142136;border:1px solid #438cff;color:#f2f6ff;border-radius:7px;padding:6px 8px;font:500 14px system-ui}
+.sub{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.sub.err{color:#ffab8a}.sub.ok{color:#8fe6b8}
+.file-actions{display:flex;align-items:center;gap:6px}.download{font-size:13px;padding:8px 11px;text-decoration:none;color:white;background:#1c3152;border-radius:8px;white-space:nowrap}.download:hover{background:#294574;filter:none}.remove{background:transparent;border:1px solid #3a4961;padding:7px 9px}
+.progress{display:none;position:relative;height:30px;border-radius:9px;background:#142136;border:1px solid #30435f;overflow:hidden}.progress.show{display:block}.progress .bar{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(110deg,#1f5fc7,#6a3fd0);transition:width .15s}.progress .ptext{position:relative;z-index:1;display:block;text-align:center;font-size:13px;line-height:28px;padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stop{background:#4b2030;width:100%}
+.features{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin:48px 0 25px;text-align:center}.feature-icon{font-size:27px;margin:0 auto 10px;width:60px;height:60px;display:grid;place-items:center;border-radius:50%;background:#18356b;color:#70aaff}.feature:nth-child(2) .feature-icon{background:#164737;color:#72e2ac}.feature:nth-child(3) .feature-icon{background:#362254;color:#d3a4ff}.feature:nth-child(4) .feature-icon{background:#4b321c;color:#ffbd70}.feature:nth-child(5) .feature-icon{background:#12434b;color:#6ee3e7}.feature h3{font-size:16px;margin:0 0 6px}.feature p{font-size:13px;color:var(--muted);margin:0}
+footer{text-align:center;color:#7084a4;padding:18px 20px 30px;font-size:13px}.notice{display:none;border-radius:9px;padding:11px 13px;background:#39251a;color:#ffd1a6;font-size:13px;overflow-wrap:anywhere;white-space:pre-line}.notice.show{display:block}
+@media(max-width:760px){header{padding:0 16px}nav a{margin-left:10px;font-size:13px}.converter{grid-template-columns:1fr;padding:16px;gap:20px}.dropzone{min-height:245px}.settings{border-left:0;border-top:1px solid #24334a;padding:20px 0 0}.settings .convert{margin-top:0}.features{grid-template-columns:repeat(2,1fr);gap:28px 12px}.feature:last-child{grid-column:1/-1}.hero{margin-bottom:26px}main{margin-top:32px}.file-item{grid-template-columns:42px minmax(0,1fr)}.thumb{width:42px;height:42px}.file-actions{grid-column:2}.file-actions .download{display:inline-block}}
+
+/* ===== Premium layer ===== */
+body{background:radial-gradient(900px 520px at 12% -8%,#2a3f9a55,transparent 60%),radial-gradient(800px 520px at 92% 0,#7b3fe44d,transparent 60%),#070d18;background-attachment:fixed;-webkit-font-smoothing:antialiased}
+header{position:sticky;top:0;z-index:20;background:#070d18cc;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.hero h1{background:linear-gradient(90deg,#fff,#a9c2ff 55%,#c9adff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.converter{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 30px 80px #0007,inset 0 1px 0 #ffffff12}
+.dropzone{background:radial-gradient(circle at 50% 0,#15294f,#0b1423 70%);cursor:pointer}
+.dropzone:hover,.dropzone:focus-visible{border-color:#6a91ff;box-shadow:0 0 0 4px #2781ff22,0 0 48px #4d83ff26;outline:0}
+.dropzone.drag{box-shadow:0 0 0 5px #2781ff33,0 0 60px #4d83ff40}
+.cloud svg{width:68px;height:68px;stroke:#7aa2ff;display:block;margin:0 auto}
+.file-button.ghost:hover{background:#294574}
+button:focus-visible,.file-button:focus-visible,a:focus-visible,summary:focus-visible,select:focus-visible{outline:2px solid #8fb4ff;outline-offset:2px}
+.file-item{transition:border-color .2s}.file-item:hover{border-color:#3d5686}
+.feature{padding:18px 10px;border-radius:14px;transition:background .25s}.feature:hover{background:#ffffff08}
+.notice{border:1px solid #ffffff14}
+footer{padding-bottom:max(30px,env(safe-area-inset-bottom))}
+@media(max-width:760px){.converter{grid-template-columns:minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ===== Elegance pass ===== */
+body{letter-spacing:.005em}
+.hero h2{font-weight:500;color:#b4c3dd;letter-spacing:.02em}.hero p{max-width:560px;margin:0 auto}
+.converter{border-radius:24px;padding:28px}.dropzone{border-radius:18px;border-color:#3a527a}
+.file-item,.field select,.field input[type=number],.field input[type=text],details.rename{border-radius:12px}
+.settings{gap:20px}.field>label{font-size:14px;color:#c9d6ee;letter-spacing:.02em}
+.seg{display:flex;gap:4px;padding:4px;background:#0e192b;border:1px solid #2a3c58;border-radius:13px}
+.seg-b{flex:1;min-width:0;padding:9px 4px;font-size:14px;background:transparent;color:#9aacc9;border-radius:9px;box-shadow:none}
+.seg-b:hover{filter:none;color:#fff;background:#1c3152}
+.seg-b[aria-checked=true]{background:linear-gradient(110deg,var(--blue),var(--purple));color:#fff;box-shadow:0 4px 14px #2781ff40}
+.seg-b:disabled{opacity:.35;background:transparent;color:#9aacc9}
+.sub,.hint{font-variant-numeric:tabular-nums}
+
+/* ===== Full-screen phone layout ===== */
+html{min-height:100%;background:#070d18}
+.fs{margin-left:14px;padding:6px 10px;font-size:18px;line-height:1;background:#1c3152;border-radius:9px;vertical-align:middle}.fs[hidden]{display:none}
+@media(max-width:760px){
+  body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+  header{height:auto;min-height:56px;padding:env(safe-area-inset-top) max(14px,env(safe-area-inset-right)) 0 max(14px,env(safe-area-inset-left))}
+  main{flex:1;width:100%;max-width:none;margin:0;padding:14px max(10px,env(safe-area-inset-right)) 0 max(10px,env(safe-area-inset-left))}
+  .hero{margin-bottom:16px}.hero h1{font-size:clamp(26px,8vw,36px)}
+  .converter{padding:14px;border-radius:20px;min-height:calc(100dvh - 150px - env(safe-area-inset-top))}
+  .dropzone{min-height:34vh;min-height:34dvh}
+  .features{margin:32px 0 18px}
+  footer{padding-bottom:max(24px,env(safe-area-inset-bottom))}
+  header{flex-wrap:nowrap;gap:8px}.brand{font-size:15px;white-space:nowrap}.logo{width:30px;height:30px;font-size:18px;margin-right:8px;border-width:2px;border-radius:8px}
+  nav{display:flex;align-items:center;white-space:nowrap}nav a{margin-left:12px}nav a[href="#home"]{display:none}.fs{margin-left:12px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="logo">▧</span>MR <span>IMG</span> CONVERTER</div>
+  <nav><a href="#home">Home</a><a href="#about">About</a><a href="#help">Help</a><button type="button" id="fs" class="fs" hidden aria-label="Toggle full screen">⛶</button></nav>
+</header>
+<main id="home">
+  <section class="hero">
+    <h1><span>▧</span> MR <span>IMG</span> CONVERTER</h1>
+    <h2>Fast. Simple. Powerful.</h2>
+    <p>Convert, rename and unpack images — including ZIP and CBZ archives. Free and private.</p>
+  </section>
+  <section class="converter" aria-label="Image converter">
+    <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Choose or drop files">
+      <div class="cloud"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 8.5a4 4 0 0 1-.5 9.5"/><path d="M12 21v-9m0 0-3 3m3-3 3 3"/></svg></div>
+      <h3>Drag &amp; drop your files here</h3>
+      <div class="or">or</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><label class="file-button" for="files">Choose files</label><label class="file-button ghost" for="folder">Choose folder</label></div>
+      <input id="files" type="file" multiple>
+      <input id="folder" type="file" webkitdirectory multiple>
+      <div class="hint">Images (JPG, PNG, WebP, AVIF, GIF, BMP, ICO, SVG, TIFF, HEIC, JP2, PNM, TGA) and archives (ZIP, CBZ, EPUB, TAR, GZ, DOCX and more) • Your files stay on your device</div>
+    </div>
+    <div class="settings">
+      <div class="field"><label for="format">Output Format</label><select id="format"><option value="original">Keep original format</option><option value="image/jpeg" selected>JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option><option value="image/avif" id="avifOpt">AVIF</option></select></div>
+      <div class="field"><label for="quality">Quality</label><select id="quality"><option value="1">Best quality</option><option value="0.85" selected>High quality</option><option value="0.7">Balanced</option><option value="0.5">Smaller file</option></select></div>
+      <div class="field">
+        <div class="checkrow"><label for="resize">Resize (optional)</label><input id="resize" type="checkbox"></div>
+        <div class="two" style="margin-top:10px"><input id="width" type="number" min="1" max="12000" value="1000" aria-label="Width in pixels" disabled><span>×</span><input id="height" type="number" min="1" max="12000" value="1000" aria-label="Height in pixels" disabled></div>
+        <div class="sub" style="margin-top:6px">Images are fitted inside this box, never stretched or enlarged.</div>
+      </div>
+      <details class="rename" id="renameBox">
+        <summary>✎ Rename files <span class="sub">(optional)</span></summary>
+        <div class="rename-body">
+          <div class="field">
+            <label for="pattern">Name pattern</label>
+            <input id="pattern" type="text" value="{name}" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <div class="chips" id="chips">
+              <button type="button" class="chip" data-pat="{name}">Original</button>
+              <button type="button" class="chip" data-pat="page_{n}" data-digits="3">page_001</button>
+              <button type="button" class="chip" data-pat="{archive}_{n}" data-digits="3">archive_001</button>
+              <button type="button" class="chip" data-pat="{folder}-{name}">folder-name</button>
+            </div>
+            <div class="sub" style="margin-top:7px">Tokens: {name} {n} {archive} {folder} {date}. The extension is added for you. Tap any file name below to rename it by hand.</div>
+          </div>
+          <div class="pair">
+            <div class="field"><label for="start">Start number</label><input id="start" type="number" min="0" max="999999" value="1"></div>
+            <div class="field"><label for="digits">Digits</label><input id="digits" type="number" min="1" max="8" value="1"></div>
+          </div>
+          <div class="pair">
+            <div class="field"><label for="find">Find</label><input id="find" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+            <div class="field"><label for="repl">Replace with</label><input id="repl" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+          </div>
+          <div class="pair">
+            <div class="field"><label for="casesel">Letter case</label><select id="casesel"><option value="">As is</option><option value="lower">lowercase</option><option value="upper">UPPERCASE</option><option value="title">Title Case</option></select></div>
+            <div class="field"><label for="sortsel">Order</label><select id="sortsel"><option value="added">As added</option><option value="asc">Name A → Z</option><option value="desc">Name Z → A</option></select></div>
+          </div>
+        </div>
+      </details>
+      <div class="field"><label for="pack">Download All as</label><select id="pack"><option value="separate">Separate files</option><option value="zip">ZIP archive</option><option value="cbz">CBZ (comic book)</option></select>
+        <input id="archiveName" type="text" placeholder="Archive name (optional)" style="margin-top:8px;display:none" autocomplete="off" spellcheck="false"></div>
+      <button class="convert" id="convert" disabled>⟳ Convert Images</button>
+      <button class="stop" id="stop" type="button" style="display:none">■ Stop</button>
+      <div class="progress" id="progress"><div class="bar" id="bar"></div><span class="ptext" id="ptext"></span></div>
+      <div id="notice" class="notice" role="status"></div>
+    </div>
+    <div class="files" id="filesSection">
+      <div class="files-heading"><h3 id="fileCount">Selected images</h3><div class="heading-actions"><button id="clearAll" class="ghost" type="button">Clear</button><button id="downloadAll" class="download-all" type="button" disabled>↓ Download All</button></div></div>
+      <div class="file-list" id="fileList"></div>
+    </div>
+  </section>
+  <section class="features" id="about">
+    <div class="feature"><div class="feature-icon">⚡</div><h3>Fast Conversion</h3><p>Convert images in seconds.</p></div>
+    <div class="feature"><div class="feature-icon">✓</div><h3>100% Free</h3><p>No fees or registration.</p></div>
+    <div class="feature"><div class="feature-icon">🔒</div><h3>Private</h3><p>Files are processed on your device.</p></div>
+    <div class="feature"><div class="feature-icon">📦</div><h3>Archives</h3><p>Open ZIP, CBZ, EPUB and TAR files.</p></div>
+    <div class="feature"><div class="feature-icon">✏️</div><h3>Batch Rename</h3><p>Patterns, numbering, find &amp; replace.</p></div>
+  </section>
+  <section id="help" class="sub" style="text-align:center">Tip: add images or an archive, pick a format, optionally set up renaming, then tap Convert Images. RAR and 7z archives are not supported — re-save them as ZIP/CBZ first. HEIC/HEIF is supported in the Android app.<div id="diag" class="sub" style="margin-top:10px">Checking this device…</div></section>
+</main>
+<footer>MR IMG CONVERTER · Free image conversion on your device</footer>
+<script>
+window.addEventListener('error', e => { try { let b = document.getElementById('errbar'); if (!b) { b = document.createElement('div'); b.id = 'errbar'; b.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#4b1d1d;color:#ffd6d6;border:1px solid #9a4646;border-radius:10px;padding:10px 12px;font:13px system-ui;white-space:pre-wrap'; document.body.appendChild(b); } b.textContent = 'Error: ' + (e.message || 'unknown') + (e.lineno ? ' (line ' + e.lineno + ')' : ''); } catch (_) {} });
+window.addEventListener('unhandledrejection', e => { try { window.dispatchEvent(new ErrorEvent('error', { message: String((e.reason && e.reason.message) || e.reason) })); } catch (_) {} });
+</script>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const tick = () => new Promise(r => setTimeout(r, 0));
+const readBuf = b => b.arrayBuffer ? b.arrayBuffer() : new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = () => rej(fr.error); fr.readAsArrayBuffer(b); });
+const natCmp = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
+const HAS_DS = typeof DecompressionStream === 'function';
+
+/* ================= DOM ================= */
+const input = $('files'), dropzone = $('dropzone'), format = $('format'), quality = $('quality');
+const resize = $('resize'), widthInput = $('width'), heightInput = $('height');
+const convertBtn = $('convert'), stopBtn = $('stop'), fileList = $('fileList'), filesSection = $('filesSection');
+const fileCount = $('fileCount'), downloadAllBtn = $('downloadAll'), clearBtn = $('clearAll'), notice = $('notice');
+const pattern = $('pattern'), startIn = $('start'), digitsIn = $('digits'), findIn = $('find'), replIn = $('repl'), caseSel = $('casesel'), sortSel = $('sortsel');
+const pack = $('pack'), archiveName = $('archiveName');
+const progress = $('progress'), bar = $('bar'), ptext = $('ptext');
+
+/* ================= State ================= */
+let items = [];
+let nextId = 1;
+let busy = false, cancel = false;
+
+/* ================= Format knowledge ================= */
+const EXT_KIND = { jpg:'jpeg', jpeg:'jpeg', jpe:'jpeg', jfif:'jpeg', pjpeg:'jpeg', pjp:'jpeg', png:'png', apng:'png', gif:'gif', webp:'webp', avif:'avif', avifs:'avif', bmp:'bmp', dib:'bmp', ico:'ico', cur:'ico', svg:'svg', tif:'tiff', tiff:'tiff', heic:'heic', heif:'heic', hif:'heic', jxl:'jxl', dng:'dng', jp2:'jp2', j2k:'jp2', jpf:'jp2', pbm:'pnm', pgm:'pnm', ppm:'pnm', pnm:'pnm', tga:'tga', icb:'tga', vda:'tga', vst:'tga' };
+const KIND_MIME = { jpeg:'image/jpeg', png:'image/png', gif:'image/gif', webp:'image/webp', avif:'image/avif', bmp:'image/bmp', ico:'image/x-icon', svg:'image/svg+xml', tiff:'image/tiff', heic:'image/heic', jxl:'image/jxl', dng:'image/x-adobe-dng', jp2:'image/jp2', pnm:'image/x-portable-anymap', tga:'image/x-tga', image:'application/octet-stream' };
+const KIND_EXT = { jpeg:'jpg', png:'png', gif:'gif', webp:'webp', avif:'avif', bmp:'bmp', ico:'ico', svg:'svg', tiff:'tif', heic:'heic', jxl:'jxl', dng:'dng', jp2:'jp2', pnm:'ppm', tga:'tga', image:'img' };
+const ARCH_EXT = new Set(['zip','cbz','epub','svgz','docx','xlsx','pptx','odt','odp','ods','apk','jar','xpi','pages','key','numbers','tar','cbt','gz','tgz','rar','cbr','7z','cb7','bz2','xz','zst']);
+const UNSUPPORTED_ARCH = new Set(['rar','7z','bz2','xz','zst']);
+const THUMB_KINDS = new Set(['jpeg','png','gif','webp','bmp','ico','avif','image']);
+
+const extOf = n => { const m = /\.([^.\/\\]+)$/.exec(n || ''); return m ? m[1].toLowerCase() : ''; };
+const baseOf = n => { n = (n || '').split(/[\/\\]/).pop(); return n.replace(/\.[^.]*$/, '') || n; };
+const leaf = p => (p || '').split(/[\/\\]/).pop();
+
+function sniff(h, name) {
+  const ext = extOf(name);
+  const ch = (a, b) => { let s = ''; for (let i = a; i < b && i < h.length; i++) s += String.fromCharCode(h[i]); return s; };
+  if (h[0] === 0xFF && h[1] === 0xD8) return 'jpeg';
+  if (ch(0, 8) === '\x89PNG\r\n\x1a\n') return 'png';
+  if (ch(0, 4) === 'GIF8') return 'gif';
+  if (ch(0, 4) === 'RIFF' && ch(8, 12) === 'WEBP') return 'webp';
+  if (ch(4, 8) === 'ftyp') {
+    const brands = ch(8, Math.min(h.length, 64));
+    if (/avif|avis/.test(brands)) return 'avif';
+    if (/hei[cxms]|hev[cx]|mif1|msf1/.test(brands)) return 'heic';
+  }
+  const m4 = ch(0, 4);
+  if (m4 === 'II*\0' || m4 === 'MM\0*' || m4 === 'II+\0' || m4 === 'MM\0+') return 'tiff';
+  if ((h[0] === 0xFF && h[1] === 0x0A) || ch(0, 12) === '\0\0\0\x0cJXL \r\n\x87\n') return 'jxl';
+  if (ch(0, 2) === 'BM' && h.length >= 18) { const d = h[14] | (h[15] << 8) | (h[16] << 16); if ([12, 40, 52, 56, 64, 108, 124].includes(d)) return 'bmp'; }
+  if (h[0] === 0 && h[1] === 0 && (h[2] === 1 || h[2] === 2) && h[3] === 0 && (h[4] | (h[5] << 8)) > 0 && (ext === 'ico' || ext === 'cur')) return 'ico';
+  if (ch(0, 12) === '\0\0\0\x0cjP  \r\n\x87\n' || (h[0] === 0xFF && h[1] === 0x4F && h[2] === 0xFF && h[3] === 0x51)) return 'jp2';
+  if (/^P[1-6][\s#]/.test(ch(0, 3)) && /^(pbm|pgm|ppm|pnm)$/.test(ext)) return 'pnm';
+  if (ch(0, 4) === 'PK\x03\x04' || ch(0, 4) === 'PK\x05\x06' || ch(0, 4) === 'PK\x07\x08') return 'zip';
+  if (h[0] === 0x1F && h[1] === 0x8B) return 'gzip';
+  if (ch(257, 262) === 'ustar') return 'tar';
+  if (ch(0, 4) === 'Rar!') return 'rar';
+  if (h[0] === 0x37 && h[1] === 0x7A && h[2] === 0xBC && h[3] === 0xAF) return '7z';
+  if (ch(0, 3) === 'BZh') return 'bz2';
+  if (h[0] === 0xFD && h[1] === 0x37 && h[2] === 0x7A && h[3] === 0x58 && h[4] === 0x5A) return 'xz';
+  if (h[0] === 0x28 && h[1] === 0xB5 && h[2] === 0x2F && h[3] === 0xFD) return 'zst';
+  let txt = ch(0, 600).replace(/^﻿|^\xEF\xBB\xBF/, '');
+  if (ext === 'svg' || /^\s*(<\?xml[^>]*\?>\s*)?(<!--[\s\S]*?-->\s*)?(<!DOCTYPE[^>]*>\s*)?<svg[\s>]/i.test(txt)) return 'svg';
+  if (ext === 'tar') return 'tar';
+  if (EXT_KIND[ext]) return EXT_KIND[ext];
+  return '';
+}
+
+/* ================= Compression helpers ================= */
+async function streamToBlob(blob, kind) {
+  if (!HAS_DS) throw new Error('This browser is too old to open compressed files (update Android System WebView).');
+  return await new Response(blob.stream().pipeThrough(new DecompressionStream(kind))).blob();
+}
+async function streamToBytes(u8, kind) {
+  const b = await new Response(new Blob([u8]).stream().pipeThrough(new DecompressionStream(kind))).arrayBuffer();
+  return new Uint8Array(b);
+}
+
+/* ================= ZIP ================= */
+function decodeName(bytes, utf8Flag) {
+  let s;
+  if (utf8Flag) s = new TextDecoder('utf-8').decode(bytes);
+  else { try { s = new TextDecoder('utf-8', { fatal: true }).decode(bytes); } catch (e) { s = new TextDecoder('windows-1252').decode(bytes); } }
+  return s.replace(/\\/g, '/');
+}
+async function zipList(blob) {
+  const size = blob.size;
+  if (size < 22) throw new Error('file is too small to be a ZIP');
+  const tailLen = Math.min(size, 70000);
+  const tail = new Uint8Array(await readBuf(blob.slice(size - tailLen)));
+  const tv = new DataView(tail.buffer);
+  let p = -1;
+  for (let i = tail.length - 22; i >= 0; i--) if (tv.getUint32(i, true) === 0x06054b50) { p = i; break; }
+  if (p < 0) throw new Error('ZIP directory not found (file damaged?)');
+  let total = tv.getUint16(p + 10, true), cdSize = tv.getUint32(p + 12, true), cdOff = tv.getUint32(p + 16, true);
+  if (total === 0xFFFF || cdSize === 0xFFFFFFFF || cdOff === 0xFFFFFFFF) {
+    if (p >= 20 && tv.getUint32(p - 20, true) === 0x07064b50) {
+      const e64 = Number(tv.getBigUint64(p - 12, true));
+      const eb = new DataView(await readBuf(blob.slice(e64, e64 + 56)));
+      if (eb.getUint32(0, true) === 0x06064b50) { total = Number(eb.getBigUint64(32, true)); cdSize = Number(eb.getBigUint64(40, true)); cdOff = Number(eb.getBigUint64(48, true)); }
+    }
+  }
+  const cd = new Uint8Array(await readBuf(blob.slice(cdOff, cdOff + cdSize)));
+  const dv = new DataView(cd.buffer);
+  const out = [];
+  let o = 0;
+  while (o + 46 <= cd.length && dv.getUint32(o, true) === 0x02014b50) {
+    const flags = dv.getUint16(o + 8, true), method = dv.getUint16(o + 10, true);
+    let csize = dv.getUint32(o + 20, true), usize = dv.getUint32(o + 24, true);
+    const nl = dv.getUint16(o + 28, true), xl = dv.getUint16(o + 30, true), cl = dv.getUint16(o + 32, true);
+    let off = dv.getUint32(o + 42, true);
+    let x = o + 46 + nl; const xe = x + xl;
+    while (x + 4 <= xe) {
+      const id = dv.getUint16(x, true), sz = dv.getUint16(x + 2, true);
+      if (id === 1) {
+        let q = x + 4;
+        if (usize === 0xFFFFFFFF) { usize = Number(dv.getBigUint64(q, true)); q += 8; }
+        if (csize === 0xFFFFFFFF) { csize = Number(dv.getBigUint64(q, true)); q += 8; }
+        if (off === 0xFFFFFFFF) { off = Number(dv.getBigUint64(q, true)); q += 8; }
+      }
+      x += 4 + sz;
+    }
+    const name = decodeName(cd.subarray(o + 46, o + 46 + nl), !!(flags & 0x800));
+    out.push({ name, method, csize, usize, off, encrypted: !!(flags & 1), isDir: name.endsWith('/') });
+    o += 46 + nl + xl + cl;
+  }
+  return out;
+}
+async function zipEntryBlob(blob, e) {
+  if (e.encrypted) throw new Error('password-protected file');
+  const hdr = new DataView(await readBuf(blob.slice(e.off, e.off + 30)));
+  if (hdr.getUint32(0, true) !== 0x04034b50) throw new Error('damaged ZIP entry');
+  const start = e.off + 30 + hdr.getUint16(26, true) + hdr.getUint16(28, true);
+  const raw = blob.slice(start, start + e.csize);
+  if (e.method === 0) return raw;
+  if (e.method === 8) return await streamToBlob(raw, 'deflate-raw');
+  throw new Error('unsupported ZIP compression (method ' + e.method + ')');
+}
+
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; } return t; })();
+function crcUpdate(crc, u8) { for (let i = 0; i < u8.length; i++) crc = CRC_T[(crc ^ u8[i]) & 255] ^ (crc >>> 8); return crc; }
+async function crc32Blob(blob) {
+  let crc = 0xFFFFFFFF;
+  for (let o = 0; o < blob.size; o += 1048576) crc = crcUpdate(crc, new Uint8Array(await readBuf(blob.slice(o, o + 1048576))));
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+async function zipBuild(entries, onProgress) {
+  const enc = new TextEncoder();
+  const parts = [], central = [];
+  let offset = 0;
+  const d = new Date();
+  const dosTime = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1);
+  const dosDate = (Math.max(0, d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  if (entries.length >= 0xFFFF) throw new Error('Too many files for one ZIP (limit 65,534). Use separate files.');
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i], nameB = enc.encode(e.name), size = e.blob.size;
+    if (size >= 0xFFFFFFFF || offset >= 0xFFFFFFFF) throw new Error('Archive would exceed the 4 GB ZIP limit. Use separate files.');
+    const crc = await crc32Blob(e.blob);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, dosTime, true); lh.setUint16(12, dosDate, true); lh.setUint32(14, crc, true);
+    lh.setUint32(18, size, true); lh.setUint32(22, size, true); lh.setUint16(26, nameB.length, true); lh.setUint16(28, 0, true);
+    parts.push(lh.buffer, nameB, e.blob);
+    central.push({ nameB, crc, size, offset });
+    offset += 30 + nameB.length + size;
+    if (onProgress) onProgress(i + 1, entries.length);
+    if (i % 8 === 0) await tick();
+  }
+  const cdStart = offset; let cdSize = 0;
+  for (const c of central) {
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+    ch.setUint16(12, dosTime, true); ch.setUint16(14, dosDate, true); ch.setUint32(16, c.crc, true);
+    ch.setUint32(20, c.size, true); ch.setUint32(24, c.size, true); ch.setUint16(28, c.nameB.length, true);
+    ch.setUint32(42, c.offset, true);
+    parts.push(ch.buffer, c.nameB); cdSize += 46 + c.nameB.length;
+  }
+  const eo = new DataView(new ArrayBuffer(22));
+  eo.setUint32(0, 0x06054b50, true); eo.setUint16(8, central.length, true); eo.setUint16(10, central.length, true);
+  eo.setUint32(12, cdSize, true); eo.setUint32(16, cdStart, true);
+  parts.push(eo.buffer);
+  return new Blob(parts, { type: 'application/zip' });
+}
+
+/* ================= TAR ================= */
+async function tarList(blob) {
+  const dec = new TextDecoder();
+  const out = []; let off = 0, longName = null, pax = {};
+  while (off + 512 <= blob.size) {
+    const h = new Uint8Array(await readBuf(blob.slice(off, off + 512)));
+    let allZero = true; for (let i = 0; i < 512; i++) if (h[i]) { allZero = false; break; }
+    if (allZero) break;
+    const str = (a, b) => { let e = a; while (e < b && h[e]) e++; return dec.decode(h.subarray(a, e)); };
+    let name = str(0, 100), size;
+    if (h[124] & 0x80) { size = 0; for (let i = 125; i < 136; i++) size = size * 256 + h[i]; }
+    else size = parseInt(str(124, 136).trim() || '0', 8) || 0;
+    const type = h[156] ? String.fromCharCode(h[156]) : '0';
+    if (str(257, 263).startsWith('ustar')) { const prefix = str(345, 500); if (prefix) name = prefix + '/' + name; }
+    const ds = off + 512;
+    if (type === 'L') longName = dec.decode(new Uint8Array(await readBuf(blob.slice(ds, ds + size)))).replace(/\0[\s\S]*$/, '');
+    else if (type === 'x') {
+      const txt = dec.decode(new Uint8Array(await readBuf(blob.slice(ds, ds + size))));
+      const m = /\d+ path=([^\n]*)\n/.exec(txt); if (m) pax.path = m[1];
+    } else if (type === '0' || type === '7') {
+      out.push({ name: (pax.path || longName || name).replace(/\\/g, '/'), size, blob: blob.slice(ds, ds + size) });
+      longName = null; pax = {};
+    }
+    off = ds + Math.ceil(size / 512) * 512;
+  }
+  return out;
+}
+
+/* ================= Ingest (files + archives) ================= */
+let stats = null;
+function wantedEntry(name) {
+  if (!name || name.endsWith('/')) return false;
+  if (/(^|\/)__MACOSX\//.test(name)) return false;
+  const b = leaf(name);
+  if (!b || b.startsWith('.') || b.toLowerCase() === 'thumbs.db' || b.toLowerCase() === 'desktop.ini') return false;
+  return true;
+}
+function setProgress(text, frac) {
+  progress.classList.add('show'); ptext.textContent = text;
+  bar.style.width = (Math.max(0, Math.min(1, frac || 0)) * 100).toFixed(1) + '%';
+}
+function hideProgress() { progress.classList.remove('show'); bar.style.width = '0'; }
+
+function addItem(o) {
+  const name = leaf(o.path);
+  let ext = extOf(name), base;
+  if (EXT_KIND[ext]) { base = name.slice(0, -(ext.length + 1)); if (o.kind && EXT_KIND[ext] !== o.kind && KIND_EXT[o.kind]) ext = KIND_EXT[o.kind]; }
+  else { base = name; ext = KIND_EXT[o.kind] || 'img'; }
+  const dir = o.path.includes('/') ? o.path.slice(0, o.path.lastIndexOf('/')) : '';
+  const it = {
+    id: nextId++, getBlob: o.getBlob, size: o.size || 0, origName: name, baseName: base, ext, path: o.path,
+    archive: o.archive || '', folder: leaf(dir), kind: o.kind || EXT_KIND[ext] || 'image',
+    mime: KIND_MIME[o.kind || EXT_KIND[ext] || 'image'] || 'application/octet-stream',
+    custom: null, full: '', result: null, error: '', thumbState: '', thumb: ''
+  };
+  items.push(it); stats.added++;
+}
+async function ingest(blob, name, archive, depth) {
+  const head = new Uint8Array(await readBuf(blob.slice(0, 600)));
+  let kind = sniff(head, name);
+  if (!kind && blob.type && blob.type.startsWith('image/')) kind = 'image';
+  if (kind === 'zip') return ingestZip(blob, name, depth);
+  if (kind === 'tar') return ingestTar(blob, name, depth);
+  if (kind === 'gzip') {
+    if (depth > 4) { stats.skipped++; return; }
+    setProgress('Unpacking ' + name + '…', 0);
+    const inner = await streamToBlob(blob, 'gzip');
+    const innerName = /\.tgz$/i.test(name) ? name.replace(/\.tgz$/i, '.tar') : name.replace(/\.svgz$/i, '.svg').replace(/\.gz$/i, '');
+    return ingest(inner, innerName === name ? name + '.out' : innerName, archive, depth + 1);
+  }
+  if (UNSUPPORTED_ARCH.has(kind)) { stats.unsupported.push(name); return; }
+  if (!kind) { try { const b = await bitmapOf(blob); b.close(); kind = 'image'; } catch (e) { stats.skipped++; return; } }
+  addItem({ getBlob: async () => blob, size: blob.size, path: name, kind, archive });
+}
+async function ingestZip(blob, name, depth) {
+  setProgress('Reading ' + name + '…', 0);
+  let entries;
+  try { entries = await zipList(blob); } catch (e) { stats.errors.push(name + ': ' + e.message); return; }
+  const arch = baseOf(name);
+  entries = entries.filter(e => !e.isDir && wantedEntry(e.name)).sort((a, b) => natCmp(a.name, b.name));
+  let encrypted = false;
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i], ext = extOf(e.name);
+    if (EXT_KIND[ext]) {
+      if (e.encrypted) { encrypted = true; continue; }
+      addItem({ getBlob: () => zipEntryBlob(blob, e), size: e.usize, path: e.name, kind: EXT_KIND[ext], archive: arch });
+    } else if (ARCH_EXT.has(ext)) {
+      if (depth >= 3) { stats.skipped++; continue; }
+      if (UNSUPPORTED_ARCH.has(ext)) { stats.unsupported.push(name + ' › ' + leaf(e.name)); continue; }
+      try { const nested = await zipEntryBlob(blob, e); await ingest(nested, leaf(e.name), baseOf(leaf(e.name)), depth + 1); }
+      catch (err) { stats.errors.push(leaf(e.name) + ': ' + err.message); }
+    } else stats.skipped++;
+    if (i % 50 === 0) { setProgress('Reading ' + name + '…', i / entries.length); await tick(); }
+  }
+  if (encrypted) stats.errors.push(name + ': some files are password-protected and were skipped');
+}
+async function ingestTar(blob, name, depth) {
+  setProgress('Reading ' + name + '…', 0);
+  let entries;
+  try { entries = await tarList(blob); } catch (e) { stats.errors.push(name + ': ' + e.message); return; }
+  const arch = baseOf(name);
+  entries = entries.filter(e => wantedEntry(e.name)).sort((a, b) => natCmp(a.name, b.name));
+  for (const e of entries) {
+    const ext = extOf(e.name);
+    if (EXT_KIND[ext]) addItem({ getBlob: async () => e.blob, size: e.size, path: e.name, kind: EXT_KIND[ext], archive: arch });
+    else if (ARCH_EXT.has(ext) && depth < 3) {
+      if (UNSUPPORTED_ARCH.has(ext)) stats.unsupported.push(name + ' › ' + leaf(e.name));
+      else await ingest(e.blob, leaf(e.name), baseOf(leaf(e.name)), depth + 1);
+    } else stats.skipped++;
+  }
+}
+
+async function addFiles(list) {
+  const files = Array.from(list || []);
+  if (!files.length) return;
+  if (busy) { showNotice('Please wait until the current job finishes.', true); return; }
+  busy = true; setBusyUI(true);
+  stats = { added: 0, skipped: 0, unsupported: [], errors: [] };
+  try {
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i], nm = f._path || f.webkitRelativePath || f.name;
+      setProgress('Reading ' + f.name + '…', i / files.length);
+      try { await ingest(f, nm, '', 0); }
+      catch (e) { stats.errors.push(f.name + ': ' + (e && e.message || e)); }
+      await tick();
+    }
+  } finally { busy = false; hideProgress(); setBusyUI(false); }
+  sortItems(true);
+  render();
+  const msgs = []; let warn = false;
+  if (stats.added) msgs.push('Added ' + stats.added + ' image' + (stats.added === 1 ? '' : 's') + '.');
+  if (stats.skipped) { msgs.push(stats.skipped + ' file' + (stats.skipped === 1 ? ' was' : 's were') + ' skipped (not images).'); warn = !stats.added; }
+  if (stats.unsupported.length) { msgs.push('RAR / 7z / BZ2 / XZ archives are not supported: ' + stats.unsupported.slice(0, 5).join(', ') + (stats.unsupported.length > 5 ? '…' : '') + '. Re-save them as ZIP or CBZ and add them again.'); warn = true; }
+  if (stats.errors.length) { msgs.push(stats.errors.slice(0, 4).join('\n')); warn = true; }
+  if (!stats.added && !msgs.length) { msgs.push('No images found.'); warn = true; }
+  showNotice(msgs.join('\n'), warn);
+}
+
+/* ================= Naming ================= */
+const OUT_EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/avif': 'avif' };
+const origFmt = it => it.kind === 'jpeg' ? 'image/jpeg' : it.kind === 'webp' ? 'image/webp' : 'image/png';
+function outExt(it) { return format.value === 'original' ? (resize.checked ? OUT_EXT[origFmt(it)] : (it.ext || 'img')) : OUT_EXT[format.value]; }
+function sanitizeName(s) { return String(s).replace(/[\\\/:*?"<>|\u0000-\u001f]/g, '_').replace(/\s+/g, ' ').trim().replace(/^\.+/, '').replace(/[. ]+$/, '').slice(0, 150).replace(/^(con|prn|aux|nul|com\d|lpt\d)$/i, '_$&'); }
+const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function applyCase(s, mode) {
+  if (mode === 'lower') return s.toLowerCase();
+  if (mode === 'upper') return s.toUpperCase();
+  if (mode === 'title') return s.toLowerCase().replace(/(^|[\s_\-.])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
+  return s;
+}
+function readRename() {
+  return {
+    pattern: pattern.value.trim() || '{name}',
+    start: Math.max(0, parseInt(startIn.value, 10) || 0),
+    digits: Math.min(8, Math.max(1, parseInt(digitsIn.value, 10) || 1)),
+    find: findIn.value, repl: replIn.value, case: caseSel.value
+  };
+}
+function computeNames() {
+  const o = readRename(), used = new Map();
+  const d = new Date(), ds = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const re = o.find ? new RegExp(escRe(o.find), 'gi') : null;
+  items.forEach((it, i) => {
+    let base;
+    if (it.custom) base = it.custom;
+    else {
+      let nm = it.baseName;
+      if (re) nm = nm.replace(re, () => o.repl);
+      const nStr = String(o.start + i).padStart(o.digits, '0');
+      const map = { name: nm, n: nStr, archive: it.archive, folder: it.folder, date: ds, ext: it.ext };
+      base = o.pattern.replace(/\{(name|n|archive|folder|date|ext)\}/gi, (m, k) => map[k.toLowerCase()]);
+      base = applyCase(base, o.case);
+    }
+    base = sanitizeName(base) || 'image';
+    const ext = outExt(it);
+    let full = base + '.' + ext, key = full.toLowerCase(), k = 2;
+    while (used.has(key)) { full = base + ' (' + k + ').' + ext; key = full.toLowerCase(); k++; }
+    used.set(key, 1); it.full = full;
+  });
+  items.forEach(updateRow);
+}
+function sortItems(keepIfAdded) {
+  const mode = sortSel.value;
+  if (mode === 'added') { items.sort((a, b) => a.id - b.id); return; }
+  const key = it => (it.archive ? it.archive + '/' : '') + it.path;
+  items.sort((a, b) => mode === 'asc' ? natCmp(key(a), key(b)) : natCmp(key(b), key(a)));
+}
+
+/* ================= Rendering ================= */
+function readableSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+}
+const io = ('IntersectionObserver' in window) ? new IntersectionObserver(entries => {
+  for (const en of entries) if (en.isIntersecting) { io.unobserve(en.target); const it = items.find(x => x.id === Number(en.target.dataset.id)); if (it) queueThumb(it); }
+}, { rootMargin: '300px' }) : null;
+
+function makeRow(it) {
+  const row = el('div', 'file-item'); row.dataset.id = it.id;
+  const thumb = el('div', 'thumb', (it.kind === 'image' ? 'IMG' : it.kind.toUpperCase()).slice(0, 4));
+  const info = el('div');
+  const name = el('button', 'filename'); name.type = 'button'; name.title = 'Tap to rename';
+  const sub = el('div', 'sub');
+  info.append(name, sub);
+  const actions = el('div', 'file-actions');
+  const dl = el('button', 'download', '↓ Download'); dl.type = 'button'; dl.style.display = 'none';
+  const rm = el('button', 'remove', '✕'); rm.type = 'button'; rm.title = 'Remove';
+  actions.append(dl, rm);
+  row.append(thumb, info, actions);
+  it.row = { row, thumb, name, sub, dl };
+  name.addEventListener('click', () => editName(it));
+  dl.addEventListener('click', async () => { try { await saveBlob(it.result, it.full); showNotice('Saved ' + it.full + (bridge() ? ' to Downloads/MR IMG Converter' : '')); } catch (e) { showNotice('Could not save: ' + (e.message || e), true); } });
+  rm.addEventListener('click', () => removeItem(it));
+  return row;
+}
+function updateRow(it) {
+  const r = it.row; if (!r) return;
+  r.name.textContent = it.full;
+  const label = it.archive ? it.archive + ' › ' + it.path : it.origName;
+  let s = label + ' · ' + readableSize(it.size), cls = 'sub';
+  if (it.error) { s += ' · ' + it.error; cls = 'sub err'; }
+  else if (it.result) { s += ' → ' + readableSize(it.result.size) + ' ✓'; cls = 'sub ok'; }
+  r.sub.textContent = s; r.sub.className = cls;
+  r.dl.style.display = it.result ? '' : 'none';
+}
+function render() {
+  filesSection.style.display = items.length ? 'block' : 'none';
+  convertBtn.disabled = !items.length || busy;
+  const frag = document.createDocumentFragment();
+  items.forEach(it => {
+    if (!it.row) { makeRow(it); if (io) io.observe(it.row.row); }
+    frag.append(it.row.row);
+  });
+  fileList.replaceChildren(frag);
+  fileCount.textContent = items.length + ' image' + (items.length === 1 ? '' : 's') + ' selected';
+  computeNames();
+  updateDownloadAll();
+}
+function updateDownloadAll() { downloadAllBtn.disabled = busy || !items.some(i => i.result); }
+function removeItem(it) {
+  if (busy) { showNotice('Please wait until the current job finishes.', true); return; }
+  items = items.filter(x => x !== it); if (it.row) it.row.row.remove();
+  fileCount.textContent = items.length + ' image' + (items.length === 1 ? '' : 's') + ' selected';
+  filesSection.style.display = items.length ? 'block' : 'none';
+  convertBtn.disabled = !items.length;
+  computeNames(); updateDownloadAll();
+}
+function editName(it) {
+  if (busy) return;
+  const r = it.row, ext = '.' + outExt(it);
+  const inp = el('input', 'name-edit'); inp.type = 'text';
+  inp.value = it.full.endsWith(ext) ? it.full.slice(0, -ext.length) : it.full;
+  inp.setAttribute('autocapitalize', 'off'); inp.setAttribute('spellcheck', 'false');
+  r.name.replaceWith(inp); inp.focus(); inp.select();
+  let done = false;
+  const finish = ok => {
+    if (done) return; done = true;
+    if (ok) {
+      let v = inp.value.trim();
+      if (v.toLowerCase().endsWith(ext.toLowerCase())) v = v.slice(0, -ext.length);
+      it.custom = v || null;
+    }
+    inp.replaceWith(r.name); computeNames();
+  };
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); finish(true); } else if (e.key === 'Escape') finish(false); });
+  inp.addEventListener('blur', () => finish(true));
+}
+
+/* ================= Thumbnails ================= */
+const thumbQueue = []; let thumbActive = 0;
+function queueThumb(it) { if (it.thumbState) return; it.thumbState = 'q'; thumbQueue.push(it); pumpThumbs(); }
+function pumpThumbs() {
+  while (thumbActive < 2 && thumbQueue.length) {
+    const it = thumbQueue.shift(); thumbActive++;
+    makeThumb(it).catch(() => {}).then(() => { thumbActive--; pumpThumbs(); });
+  }
+}
+async function makeThumb(it) {
+  if (!items.includes(it) || !it.row) return;
+  let blob = it.result || (THUMB_KINDS.has(it.kind) ? await it.getBlob() : null);
+  if (!blob) { it.thumbState = 'none'; return; }
+  const bmp = await createImageBitmap(blob, { resizeWidth: 96, resizeQuality: 'low' });
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const ctx = c.getContext('2d');
+  const s = Math.max(64 / bmp.width, 64 / bmp.height);
+  ctx.drawImage(bmp, (64 - bmp.width * s) / 2, (64 - bmp.height * s) / 2, bmp.width * s, bmp.height * s);
+  bmp.close();
+  const img = new Image(); img.alt = ''; img.src = c.toDataURL('image/jpeg', 0.7);
+  it.thumbState = 'done';
+  if (items.includes(it)) it.row.thumb.replaceChildren(img);
+}
+
+/* ================= Notices / busy UI ================= */
+function showNotice(message, warning) {
+  notice.textContent = message;
+  notice.style.background = warning ? '#39251a' : '#12382d';
+  notice.style.color = warning ? '#ffd1a6' : '#a9f3d0';
+  notice.classList.add('show');
+}
+function setBusyUI(on) {
+  convertBtn.disabled = on || !items.length;
+  clearBtn.disabled = on; downloadAllBtn.disabled = on || !items.some(i => i.result);
+}
+
+/* ================= TIFF decoder ================= */
+function lzwDecode(src, expected) {
+  const out = new Uint8Array(expected);
+  const prefix = new Int32Array(4096), suffix = new Uint8Array(4096), len = new Uint16Array(4096), first = new Uint8Array(4096);
+  for (let i = 0; i < 256; i++) { prefix[i] = -1; suffix[i] = i; len[i] = 1; first[i] = i; }
+  let bitBuf = 0, bitCnt = 0, ip = 0, codeLen = 9, next = 258, prev = -1, op = 0;
+  const emit = code => {
+    const l = len[code]; let c = code;
+    for (let i = op + l - 1; i >= op; i--) { if (i < expected) out[i] = suffix[c]; c = prefix[c]; }
+    op += l;
+  };
+  while (op < expected) {
+    while (bitCnt < codeLen) { if (ip >= src.length) return out; bitBuf = (bitBuf << 8) | src[ip++]; bitCnt += 8; }
+    bitCnt -= codeLen;
+    const code = (bitBuf >> bitCnt) & ((1 << codeLen) - 1);
+    bitBuf &= (1 << bitCnt) - 1;
+    if (code === 257) break;
+    if (code === 256) { codeLen = 9; next = 258; prev = -1; continue; }
+    if (prev === -1) { emit(code); prev = code; continue; }
+    if (code < next) {
+      emit(code);
+      if (next < 4096) { prefix[next] = prev; suffix[next] = first[code]; len[next] = len[prev] + 1; first[next] = first[prev]; next++; }
+    } else {
+      if (next < 4096) { prefix[next] = prev; suffix[next] = first[prev]; len[next] = len[prev] + 1; first[next] = first[prev]; next++; }
+      emit(next - 1 < 4096 && code === next - 1 ? code : prev);
+    }
+    prev = code;
+    if (next >= (1 << codeLen) - 1 && codeLen < 12) codeLen++;
+  }
+  return out;
+}
+function packBitsDecode(src, expected) {
+  const out = new Uint8Array(expected); let ip = 0, op = 0;
+  while (op < expected && ip < src.length) {
+    const n = src[ip++] << 24 >> 24;
+    if (n >= 0) { for (let i = 0; i <= n && op < expected && ip < src.length; i++) out[op++] = src[ip++]; }
+    else if (n !== -128) { const b = src[ip++]; for (let i = 0; i < 1 - n && op < expected; i++) out[op++] = b; }
+  }
+  return out;
+}
+async function decodeTiff(blob) {
+  const buf = await readBuf(blob), dv = new DataView(buf), len = buf.byteLength;
+  const bom = dv.getUint16(0), le = bom === 0x4949;
+  if (!le && bom !== 0x4D4D) throw new Error('Not a TIFF file');
+  const g16 = o => dv.getUint16(o, le), g32 = o => dv.getUint32(o, le);
+  if (g16(2) !== 42) throw new Error('BigTIFF files are not supported');
+  const ifd = g32(4);
+  if (ifd + 2 > len) throw new Error('Damaged TIFF');
+  const n = g16(ifd), tags = {}, TS = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8 };
+  for (let i = 0; i < n; i++) {
+    const e = ifd + 2 + i * 12; if (e + 12 > len) break;
+    const tag = g16(e), type = g16(e + 2), cnt = g32(e + 4), sz = (TS[type] || 1) * cnt;
+    const off = sz <= 4 ? e + 8 : g32(e + 8);
+    if (off + sz > len || cnt > 5e6) continue;
+    const vals = [];
+    for (let j = 0; j < cnt; j++) vals.push(type === 3 ? g16(off + 2 * j) : type === 4 ? g32(off + 4 * j) : (type === 1 || type === 7) ? dv.getUint8(off + j) : 0);
+    tags[tag] = vals;
+  }
+  const T = (t, d) => tags[t] ? tags[t][0] : d;
+  const width = T(256, 0), height = T(257, 0);
+  if (!width || !height) throw new Error('Damaged TIFF (no size)');
+  if (width * height > 150e6) throw new Error('Image is too large');
+  const bps = (tags[258] || [1])[0], comp = T(259, 1), photo = T(262, 1), spp = T(277, 1);
+  const rps = Math.min(T(278, height), height) || height, planar = T(284, 1), pred = T(317, 1);
+  if (tags[322] || tags[324]) throw new Error('Tiled TIFF is not supported');
+  if (planar !== 1) throw new Error('This TIFF layout (separate planes) is not supported');
+  if (T(339, 1) !== 1) throw new Error('Floating-point TIFF is not supported');
+  if (![1, 8, 16].includes(bps)) throw new Error('TIFF with ' + bps + '-bit samples is not supported');
+  if (bps === 1 && spp !== 1) throw new Error('This TIFF layout is not supported');
+  if (![0, 1, 2, 3, 5].includes(photo)) throw new Error('This TIFF colour mode is not supported');
+  if (photo === 3 && bps === 16) throw new Error('This TIFF colour mode is not supported');
+  const offs = tags[273], cnts = tags[279];
+  if (!offs) throw new Error('Damaged TIFF (no image data)');
+  const rowBytes = Math.ceil(width * spp * bps / 8), raw = new Uint8Array(rowBytes * height);
+  for (let s = 0; s < offs.length; s++) {
+    const rows = Math.min(rps, height - s * rps); if (rows <= 0) break;
+    const expect = rows * rowBytes;
+    const cnt = cnts ? cnts[s] : (offs.length === 1 ? len - offs[0] : 0);
+    if (offs[s] + cnt > len) throw new Error('Damaged TIFF (truncated)');
+    const chunk = new Uint8Array(buf, offs[s], cnt);
+    let data;
+    if (comp === 1) data = chunk;
+    else if (comp === 5) data = lzwDecode(chunk, expect);
+    else if (comp === 8 || comp === 32946) data = await streamToBytes(chunk, 'deflate');
+    else if (comp === 32773) data = packBitsDecode(chunk, expect);
+    else throw new Error('TIFF compression type ' + comp + ' is not supported');
+    raw.set(data.subarray(0, Math.min(data.length, expect)), s * rps * rowBytes);
+  }
+  if (pred === 2) {
+    if (bps === 8) { for (let r = 0; r < height; r++) { const ro = r * rowBytes; for (let x = spp; x < width * spp; x++) raw[ro + x] = (raw[ro + x] + raw[ro + x - spp]) & 255; } }
+    else if (bps === 16) { const rv = new DataView(raw.buffer); for (let r = 0; r < height; r++) { const ro = r * rowBytes; for (let x = spp; x < width * spp; x++) rv.setUint16(ro + x * 2, (rv.getUint16(ro + x * 2, le) + rv.getUint16(ro + (x - spp) * 2, le)) & 0xFFFF, le); } }
+  } else if (pred !== 1) throw new Error('This TIFF predictor is not supported');
+  const rgba = new Uint8ClampedArray(width * height * 4);
+  const colorN = (photo === 2) ? 3 : (photo === 5 ? 4 : 1);
+  const extra = tags[338] || [];
+  const alphaIdx = (spp > colorN && (extra[0] === 1 || extra[0] === 2)) ? colorN : -1;
+  const hi = le ? 1 : 0;
+  const S = bps === 8 ? (ro, x, c) => raw[ro + x * spp + c]
+    : bps === 16 ? (ro, x, c) => raw[ro + (x * spp + c) * 2 + hi]
+    : (ro, x) => (raw[ro + (x >> 3)] >> (7 - (x & 7))) & 1;
+  const cm = tags[320], cn = 1 << Math.min(bps, 8);
+  if (photo === 3 && (!cm || cm.length < cn * 3)) throw new Error('Damaged TIFF (no colour map)');
+  let p = 0;
+  for (let y = 0; y < height; y++) {
+    const ro = y * rowBytes;
+    for (let x = 0; x < width; x++, p += 4) {
+      let r, g, b;
+      if (photo === 2) { r = S(ro, x, 0); g = S(ro, x, 1); b = S(ro, x, 2); }
+      else if (photo === 5) { const c = S(ro, x, 0), m = S(ro, x, 1), yy = S(ro, x, 2), k = S(ro, x, 3); r = (255 - c) * (255 - k) / 255; g = (255 - m) * (255 - k) / 255; b = (255 - yy) * (255 - k) / 255; }
+      else if (photo === 3) { const idx = S(ro, x, 0); r = cm[idx] >> 8; g = cm[cn + idx] >> 8; b = cm[2 * cn + idx] >> 8; }
+      else { let v = bps === 1 ? S(ro, x) * 255 : S(ro, x, 0); if (photo === 0) v = 255 - v; r = g = b = v; }
+      rgba[p] = r; rgba[p + 1] = g; rgba[p + 2] = b; rgba[p + 3] = alphaIdx >= 0 ? S(ro, x, alphaIdx) : 255;
+    }
+  }
+  return { width, height, rgba };
+}
+
+
+/* ================= PNM + TGA decoders ================= */
+async function decodePnm(blob) {
+  const u = new Uint8Array(await readBuf(blob)); let p = 2; const type = u[1] - 48;
+  const tok = () => { for (;;) { while (p < u.length && u[p] <= 32) p++; if (u[p] === 35) { while (p < u.length && u[p] !== 10) p++; } else break; } let t = ''; while (p < u.length && u[p] > 32) t += String.fromCharCode(u[p++]); return t; };
+  const w = +tok(), h = +tok(), mx = (type === 1 || type === 4) ? 1 : +tok();
+  if (!(w > 0 && h > 0 && mx > 0) || w * h > 150e6) throw new Error('Damaged or too large PNM image');
+  const rgba = new Uint8ClampedArray(w * h * 4), wide = mx > 255, sc = 255 / mx, ascii = type <= 3;
+  if (!ascii) p++;
+  const rd = () => { if (ascii) return +tok(); if (wide) { const v = (u[p] << 8) | u[p + 1]; p += 2; return v; } return u[p++]; };
+  for (let i = 0, q = 0; i < w * h; i++, q += 4) {
+    let r, g, b;
+    if (type === 4) { const rb = Math.ceil(w / 8), y = (i / w) | 0, x = i % w; r = g = b = ((u[p + y * rb + (x >> 3)] >> (7 - (x & 7))) & 1) ? 0 : 255; }
+    else if (type === 1) r = g = b = rd() ? 0 : 255;
+    else if (type === 2 || type === 5) r = g = b = rd() * sc;
+    else { r = rd() * sc; g = rd() * sc; b = rd() * sc; }
+    rgba[q] = r; rgba[q + 1] = g; rgba[q + 2] = b; rgba[q + 3] = 255;
+  }
+  return { width: w, height: h, rgba };
+}
+async function decodeTga(blob) {
+  const u = new Uint8Array(await readBuf(blob)), idl = u[0], cmt = u[1], type = u[2], cmo = u[3] | (u[4] << 8), cml = u[5] | (u[6] << 8), cms = u[7] >> 3;
+  const w = u[12] | (u[13] << 8), h = u[14] | (u[15] << 8), bpp = u[16], desc = u[17], bytes = bpp >> 3;
+  if (!w || !h || w * h > 150e6) throw new Error('Damaged or too large TGA image');
+  if (![1, 2, 3, 9, 10, 11].includes(type) || ![1, 2, 3, 4].includes(bytes) || ((type === 1 || type === 9) && (bytes !== 1 || !cmt))) throw new Error('This TGA variant is not supported');
+  const pal = 18 + idl; let p = pal + (cmt ? cml * cms : 0);
+  const n = w * h * bytes, px = new Uint8Array(n);
+  if (type < 9) px.set(u.subarray(p, p + n));
+  else for (let o = 0; o < n && p < u.length;) { const c = u[p++], cnt = (c & 127) + 1; if (c & 128) { for (let k = 0; k < cnt; k++) for (let b = 0; b < bytes; b++) px[o++] = u[p + b]; p += bytes; } else for (let k = 0; k < cnt * bytes; k++) px[o++] = u[p++]; }
+  const rgba = new Uint8ClampedArray(w * h * 4), top = !!(desc & 32), useA = (desc & 15) > 0;
+  for (let y = 0; y < h; y++) { const sy = top ? y : h - 1 - y; for (let x = 0; x < w; x++) {
+    const s = (sy * w + x) * bytes, q = (y * w + x) * 4; let r, g, b, a = 255;
+    if (type === 1 || type === 9) { const e = pal + (px[s] - cmo) * cms; b = u[e]; g = u[e + 1]; r = u[e + 2]; }
+    else if (type === 3 || type === 11) { r = g = b = px[s]; if (bytes === 2) a = px[s + 1]; }
+    else if (bytes === 2) { const v = px[s] | (px[s + 1] << 8); r = ((v >> 10) & 31) * 255 / 31; g = ((v >> 5) & 31) * 255 / 31; b = (v & 31) * 255 / 31; }
+    else { b = px[s]; g = px[s + 1]; r = px[s + 2]; if (bytes === 4 && useA) a = px[s + 3]; }
+    rgba[q] = r; rgba[q + 1] = g; rgba[q + 2] = b; rgba[q + 3] = a;
+  } }
+  return { width: w, height: h, rgba };
+}
+
+/* ================= Android bridge ================= */
+const bridge = () => (window.AndroidBridge && typeof window.AndroidBridge.saveOpen === 'function') ? window.AndroidBridge : null;
+const blobToB64 = b => new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => { const s = String(fr.result); res(s.slice(s.indexOf(',') + 1)); }; fr.onerror = () => rej(fr.error); fr.readAsDataURL(b); });
+async function saveBlob(blob, name) {
+  const B = bridge();
+  if (B) {
+    const mime = (blob.type && (blob.type.startsWith('image/') || blob.type === 'application/zip')) ? blob.type : 'application/octet-stream';
+    const id = B.saveOpen(name, mime);
+    if (!id) throw new Error('could not create the file in Downloads');
+    try {
+      for (let o = 0; o < blob.size; o += 786432) {
+        if (!B.saveWrite(id, await blobToB64(blob.slice(o, o + 786432)))) throw new Error('write failed');
+      }
+    } catch (e) { try { B.saveClose(id); } catch (_) {} throw e; }
+    if (!B.saveClose(id)) throw new Error('could not finish saving');
+    return;
+  }
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+async function nativeDecode(blob) {
+  const B = window.AndroidBridge;
+  const id = B.decodeBegin();
+  if (!id) throw new Error('Android decoder unavailable');
+  try {
+    for (let o = 0; o < blob.size; o += 786432) if (!B.decodePut(id, await blobToB64(blob.slice(o, o + 786432)))) throw new Error('transfer failed');
+    const total = B.decodeFinish(id);
+    if (total <= 0) throw new Error('Android could not decode this image');
+    const parts = [];
+    for (let o = 0; o < total; o += 786432) {
+      const s = B.decodeRead(id, o, Math.min(786432, total - o));
+      parts.push(await (await fetch('data:application/octet-stream;base64,' + s)).blob());
+    }
+    return new Blob(parts, { type: 'image/png' });
+  } finally { try { B.decodeRelease(id); } catch (_) {} }
+}
+
+
+/* ================= AVIF encoder: one AV1 key frame (WebCodecs) wrapped in an AVIF container ================= */
+const cat = parts => { let n = 0; for (const a of parts) n += a.length; const o = new Uint8Array(n); let p = 0; for (const a of parts) { o.set(a, p); p += a.length; } return o; };
+const be32 = n => Uint8Array.of(n >>> 24 & 255, n >>> 16 & 255, n >>> 8 & 255, n & 255), be16 = n => Uint8Array.of(n >> 8 & 255, n & 255);
+const fourcc = t => Uint8Array.of(t.charCodeAt(0), t.charCodeAt(1), t.charCodeAt(2), t.charCodeAt(3));
+const mkBox = (t, ...parts) => { const b = cat(parts); return cat([be32(8 + b.length), fourcc(t), b]); };
+const mkFull = (t, ver, ...parts) => mkBox(t, Uint8Array.of(ver, 0, 0, 0), ...parts);
+function avifLevel(px) { return px <= 2359296 ? '08M' : px <= 8912896 ? '13M' : px <= 35651584 ? '16M' : ''; }
+function splitObus(u) {
+  const obus = []; let p = 0;
+  while (p < u.length) {
+    const start = p, hd = u[p++], type = (hd >> 3) & 15, ext = (hd >> 2) & 1, hasSize = (hd >> 1) & 1;
+    if (ext) p++;
+    let size = u.length - p;
+    if (hasSize) { size = 0; for (let i = 0; i < 8; i++) { const b = u[p++]; size |= (b & 127) << (7 * i); if (!(b & 128)) break; } }
+    obus.push({ type, bytes: u.subarray(start, p + size), payload: u.subarray(p, p + size) }); p += size;
+  }
+  return obus;
+}
+function seqInfo(pl, fallbackLevel) {
+  let bit = 0; const rd = n => { let v = 0; for (let i = 0; i < n; i++, bit++) v = v * 2 + ((pl[bit >> 3] >> (7 - (bit & 7))) & 1); return v; };
+  const profile = rd(3); rd(1); const reduced = rd(1); let level = fallbackLevel, tier = 0;
+  if (reduced) level = rd(5);
+  else if (!rd(1)) { rd(1); rd(5); rd(12); level = rd(5); if (level > 7) tier = rd(1); }
+  return { profile, level, tier };
+}
+function avifWrap(av1, w, h, lvlFallback) {
+  const obus = splitObus(av1), seq = obus.find(o => o.type === 1);
+  if (!seq) throw new Error('The AV1 encoder returned no sequence header.');
+  const si = seqInfo(seq.payload, lvlFallback);
+  const data = cat(obus.filter(o => o.type !== 2).map(o => o.bytes));
+  const av1C = mkBox('av1C', Uint8Array.of(0x81, (si.profile << 5) | si.level, (si.tier << 7) | (1 << 3) | (1 << 2), 0), seq.bytes);
+  const ipco = mkBox('ipco',
+    mkFull('ispe', 0, be32(w), be32(h)),
+    mkFull('pixi', 0, Uint8Array.of(3, 8, 8, 8)),
+    av1C,
+    mkBox('colr', fourcc('nclx'), be16(1), be16(13), be16(1), Uint8Array.of(0)));
+  const ipma = mkFull('ipma', 0, be32(1), be16(1), Uint8Array.of(4, 1, 2, 0x83, 4));
+  const ftyp = mkBox('ftyp', fourcc('avif'), be32(0), fourcc('avif'), fourcc('mif1'), fourcc('miaf'));
+  const meta = off => mkFull('meta', 0,
+    mkFull('hdlr', 0, be32(0), fourcc('pict'), be32(0), be32(0), be32(0), Uint8Array.of(0)),
+    mkFull('pitm', 0, be16(1)),
+    mkFull('iloc', 0, Uint8Array.of(0x44, 0), be16(1), be16(1), be16(0), be16(1), be32(off), be32(data.length)),
+    mkFull('iinf', 0, be16(1), mkFull('infe', 2, be16(1), be16(0), fourcc('av01'), Uint8Array.of(0))),
+    mkBox('iprp', ipco, ipma));
+  const off = ftyp.length + meta(0).length + 8;
+  return new Blob([ftyp, meta(off), be32(8 + data.length), fourcc('mdat'), data], { type: 'image/avif' });
+}
+async function avifSupported() {
+  try { if (!window.VideoEncoder || !window.VideoFrame) return false; const r = await VideoEncoder.isConfigSupported({ codec: 'av01.0.08M.08', width: 64, height: 64, bitrate: 200000, framerate: 1 }); return !!r.supported; }
+  catch (e) { return false; }
+}
+async function encodeAvif(canvas, ctx, q) {
+  const w = canvas.width, h = canvas.height, level = avifLevel(w * h);
+  if (!level) throw new Error('Too large for AVIF. Turn on Resize to make it smaller.');
+  if (!(await avifSupported())) throw new Error('This browser cannot create AVIF files.');
+  const d = ctx.getImageData(0, 0, w, h).data, cw = w >> 1, ch = h >> 1, yuv = new Uint8Array(w * h + 2 * cw * ch), U = w * h, V = U + cw * ch;
+  for (let by = 0; by < ch; by++) for (let bx = 0; bx < cw; bx++) {
+    let sr = 0, sg = 0, sb = 0;
+    for (let k = 0; k < 4; k++) {
+      const x = bx * 2 + (k & 1), y = by * 2 + (k >> 1), i = (y * w + x) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
+      yuv[y * w + x] = 16.5 + 0.18259 * r + 0.61423 * g + 0.06201 * b; sr += r; sg += g; sb += b;
+    }
+    sr /= 4; sg /= 4; sb /= 4; const c = by * cw + bx;
+    yuv[U + c] = 128.5 - 0.10064 * sr - 0.33857 * sg + 0.43922 * sb;
+    yuv[V + c] = 128.5 + 0.43922 * sr - 0.39894 * sg - 0.04027 * sb;
+  }
+  const bpp = q >= 1 ? 3 : q >= 0.85 ? 1.4 : q >= 0.7 ? 0.7 : 0.35;
+  const cfg = { codec: 'av01.0.' + level + '.08', width: w, height: h, bitrate: Math.max(50000, Math.round(w * h * bpp)), framerate: 1, latencyMode: 'quality', bitrateMode: 'variable' };
+  const frame = new VideoFrame(yuv, { format: 'I420', codedWidth: w, codedHeight: h, timestamp: 0, colorSpace: { primaries: 'bt709', transfer: 'iec61966-2-1', matrix: 'bt709', fullRange: false } });
+  let out = null, err = null;
+  const enc = new VideoEncoder({ output: c => { const u = new Uint8Array(c.byteLength); c.copyTo(u); out = u; }, error: e => { err = e; } });
+  try { enc.configure(cfg); enc.encode(frame, { keyFrame: true }); await enc.flush(); }
+  catch (e) { err = err || e; }
+  finally { frame.close(); try { enc.close(); } catch (_) {} }
+  if (err || !out) throw new Error('AVIF encoding failed' + (err && err.message ? ': ' + err.message : '.'));
+  return avifWrap(out, w, h, parseInt(level, 10));
+}
+
+/* ================= Decoding / converting ================= */
+function decodeViaImg(blob, mime) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(mime ? new Blob([blob], { type: mime }) : blob), img = new Image();
+    img.onload = () => { let w = img.naturalWidth, h = img.naturalHeight; if (!w || !h) { w = 1024; h = 1024; } res({ src: img, w, h, close: () => URL.revokeObjectURL(url) }); };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('decode failed')); };
+    img.src = url;
+  });
+}
+async function bitmapOf(blob) {
+  try { return await createImageBitmap(blob, { imageOrientation: 'from-image' }); }
+  catch (e) { return await createImageBitmap(blob); }
+}
+function unsupportedMsg(kind) {
+  if (kind === 'heic') return 'HEIC/HEIF can only be converted in the Android app.';
+  if (kind === 'jxl') return 'JPEG XL is not supported on this device.';
+  if (kind === 'dng') return 'DNG/RAW can only be converted in the Android app.';
+  return 'This image format could not be read on this device.';
+}
+async function decodeImage(blob, it) {
+  const kind = it.kind;
+  let tiffErr = null;
+  if (kind === 'tiff') {
+    try {
+      const t = await decodeTiff(blob);
+      const c = document.createElement('canvas'); c.width = t.width; c.height = t.height;
+      c.getContext('2d').putImageData(new ImageData(t.rgba, t.width, t.height), 0, 0);
+      return { src: c, w: t.width, h: t.height, close: () => { c.width = c.height = 0; } };
+    } catch (e) { tiffErr = e; if (!window.AndroidBridge || !window.AndroidBridge.decodeBegin) throw e; }
+  }
+  if (kind === 'pnm' || kind === 'tga') {
+    const t = kind === 'pnm' ? await decodePnm(blob) : await decodeTga(blob);
+    const c = document.createElement('canvas'); c.width = t.width; c.height = t.height;
+    c.getContext('2d').putImageData(new ImageData(t.rgba, t.width, t.height), 0, 0);
+    return { src: c, w: t.width, h: t.height, close: () => { c.width = c.height = 0; } };
+  }
+  if (kind === 'svg') return await decodeViaImg(blob, 'image/svg+xml');
+  {
+    try { const bmp = await bitmapOf(blob); return { src: bmp, w: bmp.width, h: bmp.height, close: () => bmp.close() }; } catch (e) {}
+    try { return await decodeViaImg(blob); } catch (e) {}
+  }
+  if (window.AndroidBridge && typeof window.AndroidBridge.decodeBegin === 'function') {
+    const png = await nativeDecode(blob);
+    const bmp = await bitmapOf(png);
+    return { src: bmp, w: bmp.width, h: bmp.height, close: () => bmp.close() };
+  }
+  throw new Error(tiffErr ? tiffErr.message : unsupportedMsg(kind));
+}
+function canvasBlob(canvas, type, q) {
+  return new Promise((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(new Error('Could not encode this image (too large?)')), type, q));
+}
+async function convertItem(it, o) {
+  it.result = null; it.error = '';
+  try {
+    const blob = await it.getBlob();
+    let fmt = o.fmt; if (fmt === 'original') { if (!o.resize) { it.result = new Blob([blob], { type: it.mime }); return; } fmt = origFmt(it); }
+    const dec = await decodeImage(blob, it);
+    let w = dec.w, h = dec.h;
+    if (o.resize) {
+      if (!(o.maxW >= 1) || !(o.maxH >= 1)) { dec.close(); throw new Error('Enter a valid width and height.'); }
+      const scale = Math.min(o.maxW / w, o.maxH / h, 1);
+      w = Math.max(1, Math.round(w * scale)); h = Math.max(1, Math.round(h * scale));
+    }
+    if (fmt === 'image/avif') { w = Math.max(2, w & ~1); h = Math.max(2, h & ~1); }
+    if (w * h > 120e6) { dec.close(); throw new Error('Image is too large to convert on this device'); }
+    const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d', { alpha: fmt !== 'image/jpeg' && fmt !== 'image/avif', willReadFrequently: fmt === 'image/avif' });
+    if (fmt === 'image/jpeg' || fmt === 'image/avif') { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h); }
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; ctx.drawImage(dec.src, 0, 0, w, h);
+    dec.close();
+    const out = fmt === 'image/avif' ? await encodeAvif(canvas, ctx, o.q) : await canvasBlob(canvas, fmt, o.q);
+    canvas.width = canvas.height = 0;
+    if (out.type !== fmt) throw new Error((OUT_EXT[fmt] || 'This').toUpperCase() + ' export is not supported on this device. Choose JPG, PNG or WebP.');
+    it.result = out;
+  } catch (e) { it.error = (e && e.message) || 'Conversion failed.'; }
+}
+async function convertAll() {
+  if (busy || !items.length) return;
+  busy = true; cancel = false; setBusyUI(true); stopBtn.style.display = ''; notice.classList.remove('show');
+  const o = { fmt: format.value, q: Number(quality.value), resize: resize.checked, maxW: Number(widthInput.value), maxH: Number(heightInput.value) };
+  let ok = 0, fail = 0, done = 0;
+  try {
+    for (const it of items.slice()) {
+      if (cancel) break;
+      setProgress('Converting ' + (done + 1) + ' / ' + items.length + ' — ' + it.origName, done / items.length);
+      await convertItem(it, o);
+      if (it.result) ok++; else fail++;
+      done++; updateRow(it);
+      if (it.result && !it.thumb && it.thumbState !== 'done') { it.thumbState = ''; queueThumb(it); }
+      await tick();
+    }
+  } finally { busy = false; stopBtn.style.display = 'none'; hideProgress(); setBusyUI(false); updateDownloadAll(); }
+  const stopped = cancel ? ' Stopped early.' : '';
+  if (!fail) { const r = items.filter(i => i.result); showNotice('Done! ' + ok + ' image' + (ok === 1 ? '' : 's') + ' ready (' + readableSize(r.reduce((a, i) => a + i.size, 0)) + ' → ' + readableSize(r.reduce((a, i) => a + i.result.size, 0)) + ').' + stopped); }
+  else showNotice(ok + ' of ' + (ok + fail) + ' images converted. See the message under each file for errors.' + stopped, true);
+}
+
+/* ================= Download all ================= */
+async function downloadAll() {
+  const ready = items.filter(i => i.result);
+  if (!ready.length || busy) return;
+  busy = true; setBusyUI(true);
+  try {
+    const mode = pack.value;
+    if (mode === 'separate') {
+      for (let i = 0; i < ready.length; i++) {
+        setProgress('Saving ' + (i + 1) + ' / ' + ready.length, i / ready.length);
+        await saveBlob(ready[i].result, ready[i].full);
+        await new Promise(r => setTimeout(r, bridge() ? 0 : 180));
+      }
+      showNotice('Saved ' + ready.length + ' file' + (ready.length === 1 ? '' : 's') + (bridge() ? ' to Downloads/MR IMG Converter.' : '. Your browser may ask permission for multiple downloads.'));
+    } else {
+      const names = new Set(ready.map(i => i.archive));
+      let nm = sanitizeName(archiveName.value) || ((names.size === 1 && ready[0].archive) ? ready[0].archive + '-converted' : 'converted-images');
+      nm = nm.replace(/\.(zip|cbz)$/i, '');
+      const z = await zipBuild(ready.map(i => ({ name: i.full, blob: i.result })), (d, t) => setProgress('Packing ' + d + ' / ' + t, d / t));
+      setProgress('Saving…', 1);
+      await saveBlob(new Blob([z], { type: mode === 'zip' ? 'application/zip' : 'application/octet-stream' }), nm + '.' + mode);
+      showNotice('Saved ' + nm + '.' + mode + ' (' + readableSize(z.size) + ', ' + ready.length + ' images)' + (bridge() ? ' to Downloads/MR IMG Converter.' : '.'));
+    }
+  } catch (e) { showNotice('Could not save: ' + (e && e.message || e), true); }
+  finally { busy = false; hideProgress(); setBusyUI(false); updateDownloadAll(); }
+}
+
+/* ================= Wiring ================= */
+function canEncode(type) { try { const c = document.createElement('canvas'); c.width = c.height = 1; return c.toDataURL(type).startsWith('data:' + type); } catch (e) { return false; } }
+
+(function pills() {
+  const wrap = el('div', 'seg'); wrap.setAttribute('role', 'radiogroup'); wrap.setAttribute('aria-label', 'Output format');
+  const names = { original: 'Original', 'image/jpeg': 'JPG', 'image/png': 'PNG', 'image/webp': 'WebP', 'image/avif': 'AVIF' };
+  const sync = () => wrap.childNodes.forEach(b => b.setAttribute('aria-checked', String(b.dataset.v === format.value)));
+  Array.from(format.options).forEach(o => {
+    const b = el('button', 'seg-b', names[o.value] || o.textContent); b.type = 'button'; b.dataset.v = o.value; b.setAttribute('role', 'radio');
+    if (o.disabled) { b.disabled = true; b.title = 'This browser cannot create AVIF files. Try Chrome or Edge.'; }
+    b.addEventListener('click', () => { format.value = o.value; format.dispatchEvent(new Event('change')); sync(); });
+    wrap.append(b);
+  });
+  format.style.display = 'none'; format.after(wrap); sync();
+})();
+let avifOK = false;
+const avifReady = avifSupported().then(v => {
+  avifOK = v; if (v) return;
+  const o = $('avifOpt'); if (o) o.disabled = true;
+  const b = document.querySelector('.seg-b[data-v="image/avif"]'); if (b) { b.disabled = true; b.title = 'This browser has no AV1 encoder. Chrome or Edge on desktop works.'; }
+  if (format.value === 'image/avif') { format.value = 'image/jpeg'; format.dispatchEvent(new Event('change')); }
+});
+function syncQuality() { quality.disabled = format.value === 'image/png' || format.value === 'original'; }
+format.addEventListener('change', () => { syncQuality(); computeNames(); });
+syncQuality();
+[pattern, startIn, digitsIn, findIn, replIn, caseSel].forEach(e => e.addEventListener('input', computeNames));
+sortSel.addEventListener('change', () => { if (busy) return; sortItems(); render(); });
+$('chips').addEventListener('click', e => {
+  const b = e.target.closest('button[data-pat]'); if (!b) return;
+  pattern.value = b.dataset.pat; digitsIn.value = b.dataset.digits || '1'; computeNames();
+});
+pack.addEventListener('change', () => { archiveName.style.display = pack.value === 'separate' ? 'none' : ''; });
+resize.addEventListener('change', () => { widthInput.disabled = heightInput.disabled = !resize.checked; computeNames(); });
+function invalidate() {
+  if (busy || !items.some(i => i.result)) return;
+  items.forEach(i => { i.result = null; i.error = ''; });
+  items.forEach(updateRow); updateDownloadAll();
+  showNotice('Settings changed. Press Convert Images again to apply them.', true);
+}
+[format, quality, resize, widthInput, heightInput].forEach(e => e.addEventListener('change', invalidate));
+input.addEventListener('change', e => { const f = Array.from(e.target.files); input.value = ''; addFiles(f); });
+dropzone.addEventListener('click', e => { if (e.target.closest('label') || e.target.tagName === 'INPUT') return; input.click(); });
+$('folder').addEventListener('change', e => { const f = Array.from(e.target.files); e.target.value = ''; addFiles(f); });
+['dragover', 'drop'].forEach(ev => window.addEventListener(ev, e => { if (!dropzone.contains(e.target)) e.preventDefault(); }));
+document.addEventListener('paste', e => { const f = Array.from((e.clipboardData && e.clipboardData.files) || []); if (f.length) { e.preventDefault(); addFiles(f); } });
+dropzone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
+['dragenter', 'dragover'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); }));
+['dragleave', 'drop'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('drag'); }));
+async function walkEntries(ents) {
+  const out = [];
+  const readAll = en => new Promise((res, rej) => { const r = en.createReader(), all = []; (function more() { r.readEntries(b => { if (!b.length) return res(all); all.push(...b); more(); }, rej); })(); });
+  const go = async (en, p) => {
+    if (en.isFile) { const f = await new Promise((res, rej) => en.file(res, rej)); try { Object.defineProperty(f, '_path', { value: p + en.name }); } catch (_) {} out.push(f); }
+    else if (en.isDirectory) { for (const c of await readAll(en)) await go(c, p + en.name + '/'); }
+  };
+  for (const en of ents) await go(en, '');
+  return out;
+}
+dropzone.addEventListener('drop', async e => {
+  const dt = e.dataTransfer;
+  const ents = Array.from(dt.items || []).map(i => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
+  const plain = Array.from(dt.files || []);
+  if (ents.some(x => x.isDirectory)) { try { addFiles(await walkEntries(ents)); } catch (_) { addFiles(plain); } }
+  else addFiles(plain);
+});
+convertBtn.addEventListener('click', convertAll);
+stopBtn.addEventListener('click', () => { cancel = true; });
+downloadAllBtn.addEventListener('click', downloadAll);
+clearBtn.addEventListener('click', () => { if (busy) return; items = []; fileList.replaceChildren(); render(); notice.classList.remove('show'); });
+(() => {
+  const fs = $('fs'), root = document.documentElement;
+  if (fs && document.fullscreenEnabled && root.requestFullscreen) {
+    fs.hidden = false;
+    fs.addEventListener('click', () => { (document.fullscreenElement ? document.exitFullscreen() : root.requestFullscreen({ navigationUI: 'hide' })).catch(() => {}); });
+  }
+})();
+(() => {
+  const d = $('diag'), yn = v => v ? '✓' : '✗';
+  const show = ain => { d.textContent = 'This device: open AVIF ' + yn(ain) + ' · save AVIF ' + yn(avifOK) + ' · save WebP ' + yn(canEncode('image/webp')) + ' · unpack ZIP ' + yn(HAS_DS) + (bridge() ? ' · Android app' : ''); };
+  const im = new Image(); im.onload = () => avifReady.then(() => show(true)); im.onerror = () => avifReady.then(() => show(false));
+  setTimeout(() => { if (!d.dataset.done) show(false); d.dataset.done = 1; }, 4000);
+  im.src = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADybWV0YQAAAAAAAAAoaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAGxpYmF2aWYAAAAADnBpdG0AAAAAAAEAAAAeaWxvYwAAAABEAAABAAEAAAABAAABGgAAAB0AAAAoaWluZgAAAAAAAQAAABppbmZlAgAAAAABAABhdjAxQ29sb3IAAAAAamlwcnAAAABLaXBjbwAAABRpc3BlAAAAAAAAAAIAAAACAAAAEHBpeGkAAAAAAwgICAAAAAxhdjFDgQAMAAAAABNjb2xybmNseAACAAIAAYAAAAAXaXBtYQAAAAAAAAABAAEEAQKDBAAAACVtZGF0EgAKCBgANogQEAwgMg8f8D///8WfhwB8+ErK42A=';
+})();
+})();
+</script>
+</body>
+</html>
